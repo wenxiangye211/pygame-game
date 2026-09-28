@@ -19,8 +19,19 @@ jobs:
       - name: Install buildozer
         run: pip install buildozer
 
-      - name: Initialize buildozer spec
+      - name: Generate buildozer.spec
         run: buildozer init
+
+      - name: Modify spec, add pygame and set android api
+        run: |
+          sed -i 's/^requirements = python3/requirements = python3,pygame/' buildozer.spec
+          sed -i 's/^android.api = 33/android.api = 30/' buildozer.spec
+          sed -i 's/^android.ndk = 25b/android.ndk = 25b/' buildozer.spec
+
+      - name: Accept Android SDK licenses
+        run: |
+          mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin
+          yes | ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
       - name: Build APK
         run: buildozer android debug
