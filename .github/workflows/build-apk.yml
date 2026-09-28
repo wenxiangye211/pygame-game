@@ -1,35 +1,28 @@
+name: Pygame Web Build
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python
+
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
-      - name: Install buildozer
-        run: |
-          pip install buildozer
-          sudo apt update
-          sudo apt install -y git zip unzip openjdk-17-jdk libffi-dev pkg-config libcairo2-dev
-      - name: Init buildozer
-        run: buildozer init
-      - name: 修改配置，使用pygame-ce
-        run: |
-          sed -i 's/requirements = python3,kivy/requirements = python3,pygame-ce/g' buildozer.spec
-          sed -i 's/package.name = myapp/package.name = mygame/g' buildozer.spec
-          sed -i 's/package.domain = org.test/package.domain = org.mygame.game/g' buildozer.spec
-      - name: Build APK
-        run: |
-          buildozer -v android debug
-          ls -la
-          ls -la bin/ || echo "bin文件夹里没有apk"
-      - name: Upload APK
+          python-version: "3.11"
+
+      - name: Install pygbag
+        run: pip install pygbag
+
+      - name: Build web game
+        run: pygbag main.py --build
+
+      - name: Upload web files
         uses: actions/upload-artifact@v4
         with:
-          name: game-apk
-          path: ./bin/*.apk
+          name: web-game
+          path: build/web/
