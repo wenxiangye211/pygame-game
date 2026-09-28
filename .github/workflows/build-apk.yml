@@ -23,7 +23,7 @@ jobs:
         run: buildozer init
 
       - name: Build APK
-        run: buildozer android debug || true
+        run: buildozer android debug
 
       - name: List bin folder
         run: ls -la bin/
