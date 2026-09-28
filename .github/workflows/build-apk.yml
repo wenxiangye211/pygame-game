@@ -19,7 +19,7 @@ jobs:
         run: pip install pygbag
 
       - name: Build web game
-        run: pygbag main.py --build
+        run: pygbag . --build
 
       - name: Upload web files
         uses: actions/upload-artifact@v4
