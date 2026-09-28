@@ -1,4 +1,4 @@
-name: Pygame Web Build
+name: Build APK with Buildozer
 on:
   push:
     branches: [ main ]
@@ -8,26 +8,25 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout source
+        uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install pygbag
-        run: pip install pygbag
-
-      - name: Debug show files
+      - name: Install system dependencies
         run: |
-          pwd
-          ls -la
+          sudo apt update
+          sudo apt install -y python3-pip python3-dev build-essential libssl-dev libffi-dev python3-setuptools python3-wheel openjdk-17-jdk unzip git
 
-      - name: Build web game
-        run: python -m pygbag --build .
+      - name: Install buildozer
+        run: pip install buildozer
 
-      - name: Upload web files
+      - name: Initialize buildozer spec
+        run: buildozer init
+
+      - name: Build APK
+        run: buildozer android debug deploy run || true
+
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: web-game
-          path: build/web/
+          name: game-apk
+          path: bin/*.apk
