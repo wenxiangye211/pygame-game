@@ -24,7 +24,10 @@ jobs:
           sed -i 's/package.name = myapp/package.name = mygame/g' buildozer.spec
           sed -i 's/package.domain = org.test/package.domain = org.mygame.game/g' buildozer.spec
       - name: Build APK
-        run: buildozer android debug || true
+        run: |
+          buildozer -v android debug
+          ls -la
+          ls -la bin/ || echo "bin文件夹里没有apk"
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
