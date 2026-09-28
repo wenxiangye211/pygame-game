@@ -1,4 +1,4 @@
-name: Build APK with Buildozer
+name: Build APK Buildozer
 on:
   push:
     branches: [ main ]
@@ -8,39 +8,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
-
-      - name: Install system dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y python3-pip python3-dev build-essential libssl-dev libffi-dev python3-setuptools python3-wheel openjdk-17-jdk unzip git
-
-      - name: Install buildozer
-        run: pip install buildozer
-
-      - name: Generate buildozer.spec
-        run: buildozer init
-
-      - name: Modify spec, add pygame and set android api
-        run: |
-          sed -i 's/^requirements = python3/requirements = python3,pygame/' buildozer.spec
-          sed -i 's/^android.api = 33/android.api = 30/' buildozer.spec
-          sed -i 's/^android.ndk = 25b/android.ndk = 25b/' buildozer.spec
-
-      - name: Accept Android SDK licenses
-        run: |
-          mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin
-          yes | ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
+      - uses: actions/checkout@v4
 
       - name: Build APK
-        run: buildozer android debug
-
-      - name: List bin folder
-        run: ls -la bin/
-
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
+        uses: ArtemSBulgakov/buildozer-action@v1
         with:
-          name: game-apk
-          path: bin/*.apk
+          buildozer_args: android debug
+          requirements: pygame
