@@ -7,6 +7,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}
     steps:
       - uses: actions/checkout@v4
 
@@ -17,6 +20,11 @@ jobs:
 
       - name: Install pygbag
         run: pip install pygbag
+
+      - name: Debug list files
+        run: |
+          pwd
+          ls -la
 
       - name: Build web game
         run: pygbag . --build
